@@ -12,6 +12,7 @@ onready var frames_timer = $FramesTimer
 # Constants
 const REC_DIR = "tmp" # Screenshots will be stored in this directory
 
+
 # Video properties
 var video = {
 	"fps": 24.0,
@@ -20,7 +21,9 @@ var video = {
 }
 
 var current_frame = 0
+var zeros = 0
 var audio: AudioEffectRecord
+var user_dir = OS.get_user_data_dir()
 
 func start_recording(fps: float,  crf: float):
 	frames_timer.set_wait_time(1/fps)
@@ -32,12 +35,21 @@ func stop_recording():
 	frames_timer.stop()
 	audio.set_recording_active(false)
 	current_frame = 0
+	zeros = len(str(video.files))
+	for i in range(len(video.files)):
+		var new_name = str(i)
+		for j in zeros-len(i):
+			new_name = "0" + new_name
+		new_name = "img" + new_name + ".png"
+		rename_file(video.files[i], new_name)
+		video.files[i] = new_name
+		pass
 	audio.get_recording().save_to_wav("user://tmp/audio.waw")
 	video.files.append("audio.waw")
 	_render()
 
 func _render():
-	pass # Repace with rendering code
+	pass #Replace with render code
 
 func _ready():
 	init()
@@ -95,3 +107,12 @@ func remove_directory(dir_name: String, contents:Array):
 	for i in contents:
 		dir.remove(dir_name+"/"+i)
 	dir.remove(dir_name)
+
+func rename_file(from: String, to: String):
+	match OS.get_name():
+		"X11":
+			OS.execute("mv", [user_dir+from, user_dir+to], true)
+		"OSX":
+			OS.execute("mv", [user_dir+from, user_dir+to], true)
+		"windows":
+			OS.execute("rename", [user_dir+from, user_dir+to], true)
