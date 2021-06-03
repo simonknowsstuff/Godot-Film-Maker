@@ -8,12 +8,18 @@ onready var pause_btn = $Controls/buttons/pause_button
 
 onready var settings_popup = $SettingsPopup
 
-# Const
+# Constants
 const REC_DIR = "tmp" # Screenshots will be stored in this directory
 
-func start_recording(frames_per_second, constant_rate_factor):
-	var fps: float = frames_per_second
-	var crf: float = constant_rate_factor
+# Video properties
+var video = {
+	"fps": 30.0,
+	"crf": 60.0,
+	"frames": [],
+}
+
+func start_recording():
+	pass
 
 func _ready():
 	init()
@@ -43,6 +49,10 @@ func _on_settings_button_pressed():
 	settings_popup.popup()
 
 func _on_Exit_Btn_pressed():
+	video.crf = settings_popup.get_node(
+		"SettingsRow/ValueColumn/CRF_Count").text
+	video.fps = settings_popup.get_node(
+		"SettingsRow/ValueColumn/FPS_Count").text
 	settings_popup.hide()
 
 
