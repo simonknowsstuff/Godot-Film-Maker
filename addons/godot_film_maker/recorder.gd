@@ -20,15 +20,20 @@ var video = {
 }
 
 var current_frame = 0
+var audio: AudioEffectRecord
 
 func start_recording(fps: float,  crf: float):
 	frames_timer.set_wait_time(1/fps)
 	frames_timer.start()
+	audio.set_recording_active(true)
 	create_directory(REC_DIR)
 
 func stop_recording():
 	frames_timer.stop()
+	audio.set_recording_active(false)
 	current_frame = 0
+	audio.get_recording().save_to_wav("user://tmp/audio.waw")
+	_render()
 
 func _render():
 	pass # Repace with rendering code
@@ -48,7 +53,6 @@ func _on_stop_button_pressed():
 	rec_btn.show()
 	stop_btn.hide()
 	stop_recording()
-	_render()
 	remove_directory(REC_DIR, video.frames)
 
 func _on_pause_button_pressed():
