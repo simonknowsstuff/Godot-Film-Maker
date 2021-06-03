@@ -85,9 +85,9 @@ func _on_settings_button_pressed():
 
 func _on_Exit_Btn_pressed():
 	video.crf = settings_popup.get_node(
-		"SettingsRow/ValueColumn/CRF_Count").text
+		"SettingsRow/ValueColumn/CRF_Count").value
 	video.fps = settings_popup.get_node(
-		"SettingsRow/ValueColumn/FPS_Count").text
+		"SettingsRow/ValueColumn/FPS_Count").value
 	settings_popup.hide()
 
 func _frame():
