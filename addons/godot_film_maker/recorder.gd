@@ -19,12 +19,19 @@ var video = {
 	"frames": [],
 }
 
+var current_frame = 0
+
 func start_recording(fps: float,  crf: float):
 	frames_timer.set_wait_time(1/fps)
 	frames_timer.start()
+	create_directory(REC_DIR)
 
 func stop_recording():
 	frames_timer.stop()
+	current_frame = 0
+
+func _render():
+	pass # Repace with rendering code
 
 func _ready():
 	init()
@@ -41,6 +48,8 @@ func _on_stop_button_pressed():
 	rec_btn.show()
 	stop_btn.hide()
 	stop_recording()
+	_render()
+	remove_directory(REC_DIR, video.frames)
 
 func _on_pause_button_pressed():
 	pass # Replace with function body.
@@ -61,8 +70,13 @@ func _on_Exit_Btn_pressed():
 	settings_popup.hide()
 
 func _frame():
-	# This function is called once per frame
-	pass
+	# Called every frame
+	var frame = get_tree().get_root().get_texture().get_data()
+	frame.flip_y()
+	frame.save_png("user://"+REC_DIR+"/img"+str(current_frame)+".png")
+	video.frames.append("img"+str(current_frame)+".png")
+	current_frame += 1
+
 
 # Basic tools
 func create_directory(dir_name: String):
@@ -70,3 +84,9 @@ func create_directory(dir_name: String):
 	dir.open("user://")
 	dir.make_dir(dir_name)
 
+func remove_directory(dir_name: String, contents:Array):
+	var dir = Directory.new()
+	dir.open("user://")
+	for i in contents:
+		dir.remove(dir_name+"/"+i)
+	dir.remove(dir_name)
