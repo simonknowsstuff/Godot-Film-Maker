@@ -27,8 +27,7 @@ var audio: AudioEffectRecord
 var user_dir = OS.get_user_data_dir()
 
 func start_recording(fps: float,  crf: float):
-	frames_timer.set_wait_time(1/fps)
-	frames_timer.start()
+	frames_timer.start(1/fps)
 	AudioServer.add_bus_effect(0, AudioEffectRecord.new())
 	effect_idx = AudioServer.get_bus_effect_count(0)-1
 	audio = AudioServer.get_bus_effect(effect_idx, 0)
