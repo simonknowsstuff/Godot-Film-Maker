@@ -71,7 +71,7 @@ func _on_stop_button_pressed():
 			new_name = "0" + new_name
 		new_name = "img" + new_name + ".png"
 		if new_name != video.files[i]:
-			rename_file("/tmp/"+video.files[i], "/tmp/"+new_name)
+			rename_file("/"+REC_DIR+"/"+video.files[i], "/tmp/"+new_name)
 		video.files[i] = new_name
 	remove_directory(REC_DIR, video.files)
 
