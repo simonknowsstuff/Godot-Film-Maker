@@ -16,7 +16,7 @@ const REC_DIR = "tmp" # Screenshots will be stored in this directory
 var video = {
 	"fps": 24.0,
 	"crf": 60.0,
-	"frames": [],
+	"files": [],
 }
 
 var current_frame = 0
@@ -33,6 +33,7 @@ func stop_recording():
 	audio.set_recording_active(false)
 	current_frame = 0
 	audio.get_recording().save_to_wav("user://tmp/audio.waw")
+	video.files.append("audio.waw")
 	_render()
 
 func _render():
@@ -53,7 +54,7 @@ func _on_stop_button_pressed():
 	rec_btn.show()
 	stop_btn.hide()
 	stop_recording()
-	remove_directory(REC_DIR, video.frames)
+	remove_directory(REC_DIR, video.files)
 
 func _on_pause_button_pressed():
 	pass # Replace with function body.
@@ -78,7 +79,7 @@ func _frame():
 	var frame = get_tree().get_root().get_texture().get_data()
 	frame.flip_y()
 	frame.save_png("user://"+REC_DIR+"/img"+str(current_frame)+".png")
-	video.frames.append("img"+str(current_frame)+".png")
+	video.files.append("img"+str(current_frame)+".png")
 	current_frame += 1
 
 
