@@ -8,13 +8,13 @@ onready var pause_btn = $Controls/buttons/pause_button
 
 onready var settings_popup = $SettingsPopup
 
-# Variables
-var rec_dir = "" # Screenshots will be stored in this directory
+# Const
+const REC_DIR = "tmp" # Screenshots will be stored in this directory
 
 func start_recording(frames_per_second, constant_rate_factor):
 	var fps: float = frames_per_second
 	var crf: float = constant_rate_factor
-	
+
 func _ready():
 	init()
 
@@ -51,4 +51,4 @@ func create_directory(dir_name: String):
 	var dir = Directory.new()
 	dir.open("user://")
 	dir.make_dir(dir_name)
-	
+
