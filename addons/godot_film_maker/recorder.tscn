@@ -214,9 +214,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="FramesTimer" type="Timer" parent="."]
+
 [connection signal="pressed" from="Controls/buttons/rec_button" to="." method="_on_rec_button_pressed"]
 [connection signal="pressed" from="Controls/buttons/stop_button" to="." method="_on_stop_button_pressed"]
 [connection signal="pressed" from="Controls/buttons/play_button" to="." method="_on_play_button_pressed"]
 [connection signal="pressed" from="Controls/buttons/pause_button" to="." method="_on_pause_button_pressed"]
 [connection signal="pressed" from="Controls/buttons/settings_button" to="." method="_on_settings_button_pressed"]
 [connection signal="pressed" from="SettingsPopup/Exit_Btn" to="." method="_on_Exit_Btn_pressed"]
+[connection signal="timeout" from="FramesTimer" to="." method="_frame"]

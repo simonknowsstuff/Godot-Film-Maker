@@ -7,19 +7,24 @@ onready var stop_btn = $Controls/buttons/stop_button
 onready var pause_btn = $Controls/buttons/pause_button
 
 onready var settings_popup = $SettingsPopup
+onready var frames_timer = $FramesTimer
 
 # Constants
 const REC_DIR = "tmp" # Screenshots will be stored in this directory
 
 # Video properties
 var video = {
-	"fps": 30.0,
+	"fps": 24.0,
 	"crf": 60.0,
 	"frames": [],
 }
 
-func start_recording():
-	pass
+func start_recording(fps: float,  crf: float):
+	frames_timer.set_wait_time(1/fps)
+	frames_timer.start()
+
+func stop_recording():
+	frames_timer.stop()
 
 func _ready():
 	init()
@@ -55,6 +60,9 @@ func _on_Exit_Btn_pressed():
 		"SettingsRow/ValueColumn/FPS_Count").text
 	settings_popup.hide()
 
+func _frame():
+	# This function is called once per frame
+	pass
 
 # Basic tools
 func create_directory(dir_name: String):
