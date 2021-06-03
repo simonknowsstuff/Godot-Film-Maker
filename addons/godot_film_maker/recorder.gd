@@ -32,7 +32,7 @@ func _ready():
 func _on_rec_button_pressed():
 	rec_btn.hide()
 	stop_btn.show()
-	pass # Replace with function body.
+	start_recording(video.fps, video.crf)
 
 func _on_play_button_pressed():
 	pass # Replace with function body.
@@ -40,7 +40,7 @@ func _on_play_button_pressed():
 func _on_stop_button_pressed():
 	rec_btn.show()
 	stop_btn.hide()
-	pass # Replace with function body.
+	stop_recording()
 
 func _on_pause_button_pressed():
 	pass # Replace with function body.
