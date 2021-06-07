@@ -28,6 +28,7 @@
 [sub_resource type="StyleBoxEmpty" id=10]
 
 [node name="RecorderScn" type="CanvasLayer"]
+pause_mode = 2
 layer = 128
 script = ExtResource( 1 )
 
@@ -153,51 +154,55 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -126.0
-margin_top = -9.5
-margin_right = 126.0
-margin_bottom = 42.5
+margin_left = -146.0
+margin_top = -38.0
+margin_right = 146.0
+margin_bottom = 38.0
 alignment = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="LabelColumn" type="VBoxContainer" parent="SettingsPopup/SettingsRow"]
-margin_right = 174.0
-margin_bottom = 52.0
+margin_left = 20.0
+margin_right = 194.0
+margin_bottom = 76.0
+custom_constants/separation = 10
 alignment = 1
 
-[node name="Label" type="Label" parent="SettingsPopup/SettingsRow/LabelColumn"]
-margin_top = 10.0
+[node name="FPS" type="Label" parent="SettingsPopup/SettingsRow/LabelColumn"]
+margin_top = 19.0
 margin_right = 174.0
-margin_bottom = 24.0
+margin_bottom = 33.0
 text = "FPS (Frames Per Second): "
 
-[node name="Label2" type="Label" parent="SettingsPopup/SettingsRow/LabelColumn"]
-margin_top = 28.0
+[node name="CRF" type="Label" parent="SettingsPopup/SettingsRow/LabelColumn"]
+margin_top = 43.0
 margin_right = 174.0
-margin_bottom = 42.0
+margin_bottom = 57.0
 text = "CRF (Constant Rate Factor): "
 
 [node name="ValueColumn" type="VBoxContainer" parent="SettingsPopup/SettingsRow"]
-margin_left = 178.0
-margin_right = 252.0
-margin_bottom = 52.0
+margin_left = 198.0
+margin_right = 272.0
+margin_bottom = 76.0
 alignment = 1
 
-[node name="CRF_Count" type="SpinBox" parent="SettingsPopup/SettingsRow/ValueColumn"]
+[node name="FPS_Count" type="SpinBox" parent="SettingsPopup/SettingsRow/ValueColumn"]
+margin_top = 40.0
 margin_right = 74.0
-margin_bottom = 24.0
-value = 24.0
+margin_bottom = 64.0
+max_value = 200.0
+value = 60.0
 rounded = true
 align = 1
 
-[node name="FPS_Count" type="SpinBox" parent="SettingsPopup/SettingsRow/ValueColumn"]
-margin_top = 28.0
+[node name="CRF_Count" type="SpinBox" parent="SettingsPopup/SettingsRow/ValueColumn"]
+margin_top = 12.0
 margin_right = 74.0
-margin_bottom = 52.0
-max_value = 200.0
-value = 60.0
+margin_bottom = 36.0
+max_value = 51.0
+value = 24.0
 rounded = true
 align = 1
 
@@ -215,6 +220,22 @@ __meta__ = {
 }
 
 [node name="FramesTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="SaveOutputDialog" type="FileDialog" parent="."]
+margin_left = 174.963
+margin_top = 119.565
+margin_right = 796.963
+margin_bottom = 463.565
+dialog_text = "Save video output"
+mode_overrides_title = false
+access = 2
+current_dir = "/home/simon"
+current_file = "output.mp4"
+current_path = "/home/simon/output.mp4"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [connection signal="pressed" from="Controls/buttons/rec_button" to="." method="_on_rec_button_pressed"]
 [connection signal="pressed" from="Controls/buttons/stop_button" to="." method="_on_stop_button_pressed"]
@@ -223,3 +244,4 @@ __meta__ = {
 [connection signal="pressed" from="Controls/buttons/settings_button" to="." method="_on_settings_button_pressed"]
 [connection signal="pressed" from="SettingsPopup/Exit_Btn" to="." method="_on_Exit_Btn_pressed"]
 [connection signal="timeout" from="FramesTimer" to="." method="_frame"]
+[connection signal="file_selected" from="SaveOutputDialog" to="." method="_on_SaveOutputDialog_file_selected"]
