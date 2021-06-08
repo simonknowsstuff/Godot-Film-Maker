@@ -3,41 +3,28 @@
 [ext_resource path="res://icon.png" type="Texture" id=2]
 
 [sub_resource type="Animation" id=1]
-resource_name = "e"
+resource_name = "anim"
 length = 2.0
 loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:position")
-tracks/0/interp = 2
+tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.359696, 0.7, 1.28637, 1.8 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.5, 1, 1.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector2( 102, 84 ), Vector2( 461.935, 317.966 ), Vector2( 814, 482 ), Vector2( 944.728, 44.5569 ), Vector2( 82.9744, 543.022 ) ]
+"values": [ Vector2( 141, 72 ), Vector2( 304, 302 ), Vector2( 477.667, 339.333 ), Vector2( 810.333, 267.667 ) ]
 }
 
 [node name="Node2D" type="Node2D"]
 
-[node name="ColorRect" type="ColorRect" parent="."]
-margin_right = 2262.0
-margin_bottom = 1249.0
-color = Color( 0.0666667, 0.113725, 0.196078, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-pause_mode = 2
-stream = ExtResource( 1 )
-autoplay = true
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "anim"
+anims/anim = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
-position = Vector2( 102, 84 )
+position = Vector2( 141, 72 )
 texture = ExtResource( 2 )
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-autoplay = "e"
-anims/e = SubResource( 1 )

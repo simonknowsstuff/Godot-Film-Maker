@@ -7,10 +7,8 @@
 [ext_resource path="res://addons/godot_film_maker/textures/rec_btn.png" type="Texture" id=5]
 [ext_resource path="res://addons/godot_film_maker/textures/settings_btn.png" type="Texture" id=6]
 
-[sub_resource type="ViewportTexture" id=11]
+[sub_resource type="ViewportTexture" id=1]
 viewport_path = NodePath("RenderViewport")
-
-[sub_resource type="StyleBoxEmpty" id=1]
 
 [sub_resource type="StyleBoxEmpty" id=2]
 
@@ -30,6 +28,8 @@ viewport_path = NodePath("RenderViewport")
 
 [sub_resource type="StyleBoxEmpty" id=10]
 
+[sub_resource type="StyleBoxEmpty" id=11]
+
 [node name="RecorderScn" type="CanvasLayer"]
 pause_mode = 2
 layer = 128
@@ -39,7 +39,7 @@ script = ExtResource( 1 )
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-texture = SubResource( 11 )
+texture = SubResource( 1 )
 expand = true
 stretch_mode = 6
 __meta__ = {
@@ -181,8 +181,8 @@ window_title = "Save Rendered Video"
 resizable = true
 mode_overrides_title = false
 access = 2
-current_dir = "/home/user1/Documents/Code/Godot/godot-film-maker"
-current_path = "/home/user1/Documents/Code/Godot/godot-film-maker/"
+current_dir = "/home/simon/Documents/Godot Projects/Godot-Film-Maker"
+current_path = "/home/simon/Documents/Godot Projects/Godot-Film-Maker/"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -216,11 +216,11 @@ __meta__ = {
 [node name="Record" type="Button" parent="Controls/Buttons"]
 margin_right = 40.0
 margin_bottom = 72.0
-custom_styles/hover = SubResource( 1 )
-custom_styles/pressed = SubResource( 2 )
-custom_styles/focus = SubResource( 3 )
-custom_styles/disabled = SubResource( 4 )
-custom_styles/normal = SubResource( 5 )
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/focus = SubResource( 4 )
+custom_styles/disabled = SubResource( 5 )
+custom_styles/normal = SubResource( 6 )
 icon = ExtResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -230,11 +230,11 @@ __meta__ = {
 margin_left = 44.0
 margin_right = 84.0
 margin_bottom = 72.0
-custom_styles/hover = SubResource( 1 )
-custom_styles/pressed = SubResource( 2 )
-custom_styles/focus = SubResource( 3 )
-custom_styles/disabled = SubResource( 4 )
-custom_styles/normal = SubResource( 5 )
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/focus = SubResource( 4 )
+custom_styles/disabled = SubResource( 5 )
+custom_styles/normal = SubResource( 6 )
 icon = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -244,11 +244,11 @@ __meta__ = {
 margin_left = 88.0
 margin_right = 128.0
 margin_bottom = 72.0
-custom_styles/hover = SubResource( 1 )
-custom_styles/pressed = SubResource( 2 )
-custom_styles/focus = SubResource( 3 )
-custom_styles/disabled = SubResource( 4 )
-custom_styles/normal = SubResource( 5 )
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/focus = SubResource( 4 )
+custom_styles/disabled = SubResource( 5 )
+custom_styles/normal = SubResource( 6 )
 icon = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -258,11 +258,11 @@ __meta__ = {
 margin_left = 132.0
 margin_right = 172.0
 margin_bottom = 72.0
-custom_styles/hover = SubResource( 1 )
-custom_styles/pressed = SubResource( 2 )
-custom_styles/focus = SubResource( 3 )
-custom_styles/disabled = SubResource( 4 )
-custom_styles/normal = SubResource( 5 )
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/focus = SubResource( 4 )
+custom_styles/disabled = SubResource( 5 )
+custom_styles/normal = SubResource( 6 )
 icon = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -272,11 +272,11 @@ __meta__ = {
 margin_left = 176.0
 margin_right = 216.0
 margin_bottom = 72.0
-custom_styles/hover = SubResource( 6 )
-custom_styles/pressed = SubResource( 7 )
-custom_styles/focus = SubResource( 8 )
-custom_styles/disabled = SubResource( 9 )
-custom_styles/normal = SubResource( 10 )
+custom_styles/hover = SubResource( 7 )
+custom_styles/pressed = SubResource( 8 )
+custom_styles/focus = SubResource( 9 )
+custom_styles/disabled = SubResource( 10 )
+custom_styles/normal = SubResource( 11 )
 icon = ExtResource( 6 )
 
 [node name="RenderViewport" type="Viewport" parent="."]

@@ -110,6 +110,7 @@ func render_video(output_path):
 			"-i", user_dir + "/tmp/img%d.png",
 #			"-i", user_dir + "/tmp/audio.wav",
 #			"-crf", video.crf,
+			"-vf", "format=yuv420p",
 			output_path
 		],
 		true, output
