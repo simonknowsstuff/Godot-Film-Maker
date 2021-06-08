@@ -1,6 +1,5 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://moosic.wav" type="AudioStream" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
 
 [sub_resource type="Animation" id=1]
@@ -21,6 +20,14 @@ tracks/0/keys = {
 }
 
 [node name="Node2D" type="Node2D"]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_right = 2262.0
+margin_bottom = 1249.0
+color = Color( 0.0666667, 0.113725, 0.196078, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 pause_mode = 2
