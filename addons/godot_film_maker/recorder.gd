@@ -22,17 +22,21 @@ var video = {
 	"resolution": Vector2(1920, 1080)
 }
 
+var thread: Thread
 var current_frame = 0
 var effect_idx = 0
 var audio: AudioEffectRecord
 var user_dir: String = OS.get_user_data_dir()
 var should_stop = false
+var done_saving = true
+var frames = []
 
 onready var current_scene = get_tree().current_scene
 
 func _ready():
 	stop_btn.hide()
 	rec_btn.show()
+	thread = Thread.new()
 
 	get_tree().paused = true
 
@@ -61,6 +65,7 @@ func start_recording(fps: float, crf: float):
 	# Lock the engine FPS to the video FPS
 	Engine.target_fps = video.fps
 
+	thread.start(self, "start")
 	# Start saving frames
 	snap_frame()
 
@@ -76,17 +81,27 @@ func snap_frame():
 		# Wait two frames
 		yield(get_tree(), "idle_frame")
 		yield(get_tree(), "idle_frame")
+		frames.append(frame)
 
-		# Save it
-		frame.save_png("user://" + REC_DIR + "/img"+str(current_frame)+".png")
-		video.files.append("img"+str(current_frame)+".png")
-		current_frame += 1
+func save():
+	done_saving = false
+	while !done_saving:
+		for frame in frames:
+			frame.save_png("user://" + REC_DIR + "/img"+str(current_frame)+".png")
+			video.files.append("img"+str(current_frame)+".png")
+			current_frame += 1
+		frames = []
+		if should_stop:	done_saving = true
+	
 
 func stop_recording():
 	# Stop the frame saving loop
 	should_stop = true
 	audio.set_recording_active(false)
-
+	
+	# Wait for saving
+	while !done_saving: pass
+	
 	# Reset frame number
 	current_frame = 0
 	audio.get_recording().save_to_wav("user://tmp/audio.wav")
