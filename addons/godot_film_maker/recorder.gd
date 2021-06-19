@@ -28,7 +28,6 @@ var effect_idx = 0
 var audio: AudioEffectRecord
 var user_dir: String = OS.get_user_data_dir()
 var should_stop = false
-var done_saving = true
 var frames = []
 
 onready var current_scene = get_tree().current_scene
@@ -84,7 +83,7 @@ func snap_frame():
 		frames.append(frame)
 
 func save():
-	done_saving = false
+	var done_saving = false
 	while !done_saving:
 		for frame in frames:
 			frame.save_png("user://" + REC_DIR + "/img"+str(current_frame)+".png")
@@ -100,7 +99,7 @@ func stop_recording():
 	audio.set_recording_active(false)
 	
 	# Wait for saving
-	while !done_saving: pass
+	thread.wait_to_finish()
 	
 	# Reset frame number
 	current_frame = 0
