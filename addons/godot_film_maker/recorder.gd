@@ -22,30 +22,45 @@ var video = {
 	"resolution": Vector2(1920, 1080)
 }
 
-var thread: Thread
 var current_frame = 0
 var effect_idx = 0
 var audio: AudioEffectRecord
 var user_dir: String = OS.get_user_data_dir()
-var should_stop = false
-var done_saving = true
+
+# Multithreaded resources, handle with care
+var capture_semaphore: Semaphore
+var save_semaphore: Semaphore
+var threads = []
 var frames = []
+
+var stop_mutex: Mutex
+var should_stop = false
+# End of multithread resources
 
 onready var current_scene = get_tree().current_scene
 
 func _ready():
 	stop_btn.hide()
 	rec_btn.show()
-	thread = Thread.new()
 
 	get_tree().paused = true
 
 	# Pause the scene's tree to prevent any animations from playing
 	current_scene.pause_mode = Node.PAUSE_MODE_STOP
 
+	capture_semaphore = Semaphore.new()
+	save_semaphore = Semaphore.new()
+
+	stop_mutex = Mutex.new()
+
+	for i in 12:
+		var thread = Thread.new()
+		thread.start(self, "_frame_saver_thread", i)
+		threads.append(thread)
+
 	print("Godot Film Maker initialised!")
 
-func start_recording(fps: float, crf: float):
+func start_recording():
 	settings_btn.disabled = true
 	AudioServer.add_bus_effect(0, AudioEffectRecord.new())
 	effect_idx = AudioServer.get_bus_effect_count(0) - 1
@@ -63,51 +78,89 @@ func start_recording(fps: float, crf: float):
 	create_directory(REC_DIR)
 
 	# Lock the engine FPS to the video FPS
-	Engine.target_fps = video.fps
+	Engine.iterations_per_second = video.fps
+	frames.resize(int(video.fps))
 
-	thread.start(self, "start")
 	# Start saving frames
+	for i in threads:
+		capture_semaphore.post()
 	snap_frame()
 
 func snap_frame():
-	while !should_stop:
-		# Play the tree for a frame
-		current_scene.pause_mode = Node.PAUSE_MODE_PROCESS
-		yield(get_tree(), "idle_frame")
-		current_scene.pause_mode = Node.PAUSE_MODE_STOP
+	while true:
+		print("Waiting for save to complete...")
+		for i in threads:
+			capture_semaphore.wait()
 
-		# Grab the viewport
-		var frame = $RenderViewport.get_texture().get_data()
-		# Wait two frames
-		yield(get_tree(), "idle_frame")
-		yield(get_tree(), "idle_frame")
-		frames.append(frame)
+		if should_stop:
+			break
 
-func save():
-	done_saving = false
-	while !done_saving:
-		for frame in frames:
-			frame.save_png("user://" + REC_DIR + "/img"+str(current_frame)+".png")
-			video.files.append("img"+str(current_frame)+".png")
+		for i in int(video.fps):
+			print("Preparing frame ", current_frame)
+			# Play the tree for a frame
+			current_scene.pause_mode = Node.PAUSE_MODE_PROCESS
+			yield(get_tree(), "physics_frame")
+			yield(get_tree(), "physics_frame")
+			current_scene.pause_mode = Node.PAUSE_MODE_STOP
+
+			# Grab the viewport
+			var frame = $RenderViewport.get_texture().get_data()
+			# Wait a frame
+			yield(get_tree(), "idle_frame")
+
+			frames[i] = [frame, current_frame]
 			current_frame += 1
-		frames = []
-		if should_stop:	done_saving = true
-	
+
+		for i in threads:
+			save_semaphore.post()
+
+func _frame_saver_thread(thread_start_index):
+	while true:
+		print("Waiting for capture to complete...")
+		save_semaphore.wait() # Wait until posted.
+		print("Saving frames...")
+
+		stop_mutex.lock()
+		if should_stop:
+			stop_mutex.unlock()
+			break
+		stop_mutex.unlock()
+
+		for i in range(thread_start_index, frames.size(), threads.size()):
+			if frames[i] == null:
+				break
+			print(frames[i][1])
+			frames[i][0].save_exr("user://" + REC_DIR + "/img"+str(frames[i][1])+".exr")
+			video.files.append("img"+str(frames[i][1])+".png")
+
+		print("Frames saved, signalling capture")
+		capture_semaphore.post();
+
+	print("Stopping thread")
 
 func stop_recording():
 	# Stop the frame saving loop
-	should_stop = true
 	audio.set_recording_active(false)
-	
+
+	stop_mutex.lock()
+	should_stop = true
+	stop_mutex.unlock()
+
+	# Unblock by posting.
+	for i in threads:
+		save_semaphore.post()
+		capture_semaphore.post()
+
 	# Wait for saving
-	while !done_saving: pass
-	
+	for thread in threads:
+		thread.wait_to_finish()
+
 	# Reset frame number
 	current_frame = 0
 	audio.get_recording().save_to_wav("user://tmp/audio.wav")
 	AudioServer.remove_bus_effect(0, effect_idx)
 
-	Engine.target_fps = 60
+	Engine.iterations_per_second = 60
 
 	# Show the export popup
 	export_popup.show()
@@ -122,24 +175,39 @@ func render_video(output_path):
 			"-y",
 			"-f", "image2",
 			"-framerate", video.fps,
-			"-i", user_dir + "/tmp/img%d.png",
+			"-i", user_dir + "/tmp/img%d.exr",
 #			"-i", user_dir + "/tmp/audio.wav",
 #			"-crf", video.crf,
 			"-vf", "format=yuv420p",
 			output_path
 		],
-		true, output
+		true, output, true
 	)
 	print("Render done!")
 	print(output)
 	settings_btn.disabled = false
 	remove_directory(REC_DIR, video.files)
 
+# Thread must be disposed (or "joined"), for portability.
+func _exit_tree():
+	stop_mutex.lock()
+	should_stop = true
+	stop_mutex.unlock()
+
+	# Wait for saving
+	for thread in threads:
+		thread.wait_to_finish()
+
+	# Unblock by posting.
+	for i in threads:
+		save_semaphore.post()
+		capture_semaphore.post()
+
 # Event handlers
 func _on_rec_button_pressed():
 	rec_btn.hide()
 	stop_btn.show()
-	start_recording(video.fps, video.crf)
+	start_recording()
 
 func _on_play_button_pressed():
 	pass # Replace with function body.
