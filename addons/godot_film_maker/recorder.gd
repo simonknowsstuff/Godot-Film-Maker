@@ -19,7 +19,8 @@ var video = {
 	"crf": 60.0,
 	"files": [],
 	"output_path": "",
-	"resolution": Vector2(1920, 1080)
+	"viewport_scale": 1.0,
+	"video_scale": 1.0,
 }
 
 var current_frame = 0
@@ -72,7 +73,7 @@ func start_recording():
 	$PreviewWindow.visible = true
 
 	# Prepare the viewport resolution
-	$RenderViewport.size = video.resolution
+	$RenderViewport.size = get_tree().get_root().size * video.viewport_scale
 
 	# Create the folder where we save our frames
 	create_directory(REC_DIR)
@@ -130,7 +131,10 @@ func _frame_saver_thread(thread_start_index):
 			if frames[i] == null:
 				break
 			print(frames[i][1])
-			frames[i][0].save_exr("user://" + REC_DIR + "/img"+str(frames[i][1])+".exr")
+			var img = frames[i][0]
+			var scaled_size = img.get_size() * video.video_scale
+			img.resize(scaled_size.x, scaled_size.y, Image.INTERPOLATE_NEAREST)
+			img.save_exr("user://" + REC_DIR + "/img"+str(frames[i][1])+".exr")
 			video.files.append("img"+str(frames[i][1])+".png")
 
 		print("Frames saved, signalling capture")
@@ -226,11 +230,12 @@ func _on_settings_button_pressed():
 func _on_Exit_Btn_pressed():
 	video.crf = $SettingsPopup/Settings/CRF/Value.value
 	video.fps = $SettingsPopup/Settings/FPS/Value.value
-	video.resolution.x = $SettingsPopup/Settings/Resolution/Value/X.value
-	video.resolution.y = $SettingsPopup/Settings/Resolution/Value/Y.value
+	video.viewport_scale = $SettingsPopup/Settings/ViewportScale/Value.value
+	video.video_scale = $SettingsPopup/Settings/ViewportScale/Value.value
 	print("Framerate: ", video.fps, " FPS")
 	print("CRF: ", video.crf)
-	print("Resolution: ", video.resolution)
+	print("Viewport Scale: ", video.viewport_scale)
+	print("Video Scale: ", video.viewport_scale)
 
 	settings_popup.hide()
 
