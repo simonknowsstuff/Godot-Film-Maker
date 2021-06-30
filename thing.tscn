@@ -23,8 +23,12 @@ tracks/0/keys = {
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "anim"
+playback_process_mode = 0
 anims/anim = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 141, 72 )
 texture = ExtResource( 2 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
