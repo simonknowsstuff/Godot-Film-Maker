@@ -99,7 +99,7 @@ margin_bottom = 24.0
 max_value = 200.0
 value = 60.0
 rounded = true
-align = 1
+align = 3
 suffix = "FPS"
 
 [node name="CRF" type="HBoxContainer" parent="SettingsPopup/Settings"]
@@ -121,41 +121,53 @@ margin_bottom = 24.0
 max_value = 51.0
 value = 24.0
 rounded = true
-align = 1
+align = 3
 
-[node name="Resolution" type="HBoxContainer" parent="SettingsPopup/Settings"]
+[node name="ViewportScale" type="HBoxContainer" parent="SettingsPopup/Settings"]
 margin_top = 74.0
+margin_right = 328.0
+margin_bottom = 98.0
+
+[node name="Label" type="Label" parent="SettingsPopup/Settings/ViewportScale"]
+margin_right = 250.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+size_flags_vertical = 5
+text = "Viewport Scale"
+
+[node name="Value" type="SpinBox" parent="SettingsPopup/Settings/ViewportScale"]
+margin_left = 254.0
+margin_right = 328.0
+margin_bottom = 24.0
+min_value = 0.1
+max_value = 4.0
+step = 0.01
+value = 1.0
+align = 3
+suffix = "x"
+
+[node name="VideoScale" type="HBoxContainer" parent="SettingsPopup/Settings"]
+margin_top = 102.0
 margin_right = 328.0
 margin_bottom = 126.0
 
-[node name="Label" type="Label" parent="SettingsPopup/Settings/Resolution"]
+[node name="Label" type="Label" parent="SettingsPopup/Settings/VideoScale"]
 margin_right = 250.0
-margin_bottom = 52.0
+margin_bottom = 24.0
 size_flags_horizontal = 3
 size_flags_vertical = 5
-text = "Resolution"
+text = "Video Scale"
 
-[node name="Value" type="VBoxContainer" parent="SettingsPopup/Settings/Resolution"]
+[node name="Value" type="SpinBox" parent="SettingsPopup/Settings/VideoScale"]
 margin_left = 254.0
 margin_right = 328.0
-margin_bottom = 52.0
-
-[node name="X" type="SpinBox" parent="SettingsPopup/Settings/Resolution/Value"]
-margin_right = 74.0
 margin_bottom = 24.0
-min_value = 8.0
-max_value = 16384.0
-value = 1920.0
-suffix = "px"
-
-[node name="Y" type="SpinBox" parent="SettingsPopup/Settings/Resolution/Value"]
-margin_top = 28.0
-margin_right = 74.0
-margin_bottom = 52.0
-min_value = 9.0
-max_value = 16384.0
-value = 1080.0
-suffix = "px"
+min_value = 0.1
+max_value = 4.0
+step = 0.01
+value = 1.0
+align = 3
+suffix = "x"
 
 [node name="Spacer" type="Control" parent="SettingsPopup/Settings"]
 margin_top = 130.0
@@ -181,8 +193,8 @@ window_title = "Save Rendered Video"
 resizable = true
 mode_overrides_title = false
 access = 2
-current_dir = "/home/simon/Documents/Godot Projects/Godot-Film-Maker"
-current_path = "/home/simon/Documents/Godot Projects/Godot-Film-Maker/"
+current_dir = "/home/user1/Documents/Code/Godot/godot-film-maker"
+current_path = "/home/user1/Documents/Code/Godot/godot-film-maker/"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -281,6 +293,7 @@ icon = ExtResource( 6 )
 
 [node name="RenderViewport" type="Viewport" parent="."]
 size = Vector2( 800, 600 )
+size_override_stretch = true
 render_target_v_flip = true
 audio_listener_enable_2d = true
 audio_listener_enable_3d = true
