@@ -31,4 +31,5 @@ position = Vector2( 141, 72 )
 texture = ExtResource( 2 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2( 512, 304 )
 current = true

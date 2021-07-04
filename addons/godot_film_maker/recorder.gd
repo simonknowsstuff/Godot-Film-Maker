@@ -230,11 +230,9 @@ func _on_settings_button_pressed():
 func _on_Exit_Btn_pressed():
 	video.crf = $SettingsPopup/Settings/CRF/Value.value
 	video.fps = $SettingsPopup/Settings/FPS/Value.value
-	video.viewport_scale = $SettingsPopup/Settings/ViewportScale/Value.value
 	video.video_scale = $SettingsPopup/Settings/ViewportScale/Value.value
 	print("Framerate: ", video.fps, " FPS")
 	print("CRF: ", video.crf)
-	print("Viewport Scale: ", video.viewport_scale)
 	print("Video Scale: ", video.viewport_scale)
 
 	settings_popup.hide()

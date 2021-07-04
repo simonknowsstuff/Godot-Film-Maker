@@ -193,8 +193,8 @@ window_title = "Save Rendered Video"
 resizable = true
 mode_overrides_title = false
 access = 2
-current_dir = "/home/user1/Documents/Code/Godot/godot-film-maker"
-current_path = "/home/user1/Documents/Code/Godot/godot-film-maker/"
+current_dir = "/home/simon/Documents/Godot Projects/Godot-Film-Maker"
+current_path = "/home/simon/Documents/Godot Projects/Godot-Film-Maker/"
 __meta__ = {
 "_edit_use_anchors_": false
 }
