@@ -17,7 +17,6 @@ const REC_DIR = "tmp" # Screenshots will be stored in this directory within user
 var video = {
 	"fps": 60.0,
 	"crf": 60.0,
-	"files": [],
 	"output_path": "",
 	"viewport_scale": 1.0,
 	"video_scale": 1.0,
@@ -135,7 +134,6 @@ func _frame_saver_thread(thread_start_index):
 			var scaled_size = img.get_size() * video.video_scale
 			img.resize(scaled_size.x, scaled_size.y, Image.INTERPOLATE_NEAREST)
 			img.save_exr("user://" + REC_DIR + "/img"+str(frames[i][1])+".exr")
-			video.files.append("img"+str(frames[i][1])+".png")
 
 		print("Frames saved, signalling capture")
 		capture_semaphore.post();
@@ -190,7 +188,7 @@ func render_video(output_path):
 	print("Render done!")
 	print(output)
 	settings_btn.disabled = false
-	remove_directory(REC_DIR, video.files)
+	remove_directory(REC_DIR)
 
 # Thread must be disposed (or "joined"), for portability.
 func _exit_tree():
@@ -246,12 +244,16 @@ func create_directory(dir_name: String):
 	dir.open("user://")
 	dir.make_dir(dir_name)
 
-func remove_directory(dir_name: String, contents:Array):
+func remove_directory(dir_name: String):
 	var dir = Directory.new()
+	dir.open("user://"+ dir_name)
+	dir.list_dir_begin(true, true)
+	
+	var file = dir.get_next()
+	while file != "":
+		dir.remove(file)
+		file = dir.get_next()
 	dir.open("user://")
-	for i in contents:
-		dir.remove(dir_name+"/"+i)
-		dir.remove(dir_name+"/audio.wav")
 	dir.remove(dir_name)
 
 func reparent(child: Node, new_parent: Node):
