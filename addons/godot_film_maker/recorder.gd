@@ -13,10 +13,21 @@ onready var settings_popup = $SettingsPopup
 # Constants
 const REC_DIR = "tmp" # Screenshots will be stored in this directory within user://
 
+# Video config
+const VIDEO_DEFAULT = {
+	"fps": 60.0,
+	"crf": 24.0,
+	"output_path": "",
+	"viewport_scale": 1.0,
+	"video_scale": 1.0
+}
+const VIDEO_CONFIG_SAVE_PATH = "user://video.json"
+
+
 # Video properties
 var video = {
 	"fps": 60.0,
-	"crf": 60.0,
+	"crf": 24.0,
 	"output_path": "",
 	"viewport_scale": 1.0,
 	"video_scale": 1.0,
@@ -40,6 +51,7 @@ var should_stop = false
 onready var current_scene = get_tree().current_scene
 
 func _ready():
+	load_video_preferences()
 	stop_btn.hide()
 	rec_btn.show()
 
@@ -59,6 +71,22 @@ func _ready():
 		threads.append(thread)
 
 	print("Godot Film Maker initialised!")
+
+func load_video_preferences():
+	var load_cfg = File.new()
+	if not load_cfg.file_exists(VIDEO_CONFIG_SAVE_PATH):
+		video = VIDEO_DEFAULT.duplicate(true)
+		save_video_preferences()
+	load_cfg.open(VIDEO_CONFIG_SAVE_PATH, File.READ)
+	video = parse_json(load_cfg.get_as_text())
+	update_settings_menu(video.crf, video.fps, video.video_scale, video.viewport_scale)
+	load_cfg.close()
+
+func save_video_preferences():
+	var save_cfg = File.new()
+	save_cfg.open(VIDEO_CONFIG_SAVE_PATH, File.WRITE)
+	save_cfg.store_line(to_json(video))
+	save_cfg.close()
 
 func start_recording():
 	settings_btn.disabled = true
@@ -179,8 +207,8 @@ func render_video(output_path):
 			"-framerate", video.fps,
 			"-i", user_dir + "/tmp/img%d.exr",
 #			"-i", user_dir + "/tmp/audio.wav",
-#			"-crf", video.crf,
-			"-vf", "format=yuv420p",
+			"-crf", video.crf,
+#			"-vf", "format=yuv420p",
 			output_path
 		],
 		true, output, true
@@ -226,13 +254,11 @@ func _on_settings_button_pressed():
 	settings_popup.popup()
 
 func _on_Exit_Btn_pressed():
-	video.crf = $SettingsPopup/Settings/CRF/Value.value
 	video.fps = $SettingsPopup/Settings/FPS/Value.value
-	video.video_scale = $SettingsPopup/Settings/ViewportScale/Value.value
-	print("Framerate: ", video.fps, " FPS")
-	print("CRF: ", video.crf)
-	print("Video Scale: ", video.viewport_scale)
-
+	video.crf = $SettingsPopup/Settings/CRF/Value.value
+	video.video_scale = $SettingsPopup/Settings/VideoScale/Value.value
+	video.viewport_scale = $SettingsPopup/Settings/ViewportScale/Value.value
+	save_video_preferences()
 	settings_popup.hide()
 
 func _on_SaveOutputDialog_file_selected(path):
@@ -260,3 +286,9 @@ func reparent(child: Node, new_parent: Node):
 	var old_parent = child.get_parent()
 	old_parent.remove_child(child)
 	new_parent.add_child(child)
+
+func update_settings_menu(crf=24, fps=60, video_scale=1, viewport_scale=1):
+	$SettingsPopup/Settings/CRF/Value.value = crf
+	$SettingsPopup/Settings/FPS/Value.value = fps
+	$SettingsPopup/Settings/VideoScale/Value.value = video_scale
+	$SettingsPopup/Settings/ViewportScale/Value.value = viewport_scale
