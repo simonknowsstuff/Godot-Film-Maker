@@ -27,6 +27,7 @@ The repository as a whole is a Godot project. You can import it from the Project
 * Once you have begun recording, you can use the square button to stop recording any time. A save file prompt will appear. 
  Note that "filename.extension" must be used to save the video file. 
 * You can also add custom ffmpeg parametters while exporting through ffmpeg by locating the recorder.gd file found in addons > godot_film_maker. Scroll down to the line where "# Add in your custom ffmpeg commands here." is written and add in your parameters here.
+* While recording, make sure the process mode is set to "Physics" under the Playback Options or set a simillar option to all nodes used for recording. This is a known issue as on process, when the capturing code slows down rendering, the process delta kept changing while testing (This is probably Godot adjusting the delta variable to compensate lag)
 
 ## Development
 
