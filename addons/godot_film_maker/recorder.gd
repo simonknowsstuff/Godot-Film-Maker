@@ -19,10 +19,10 @@ const VIDEO_DEFAULT = {
 	"crf": 24.0,
 	"output_path": "",
 	"viewport_scale": 1.0,
-	"video_scale": 1.0
+	"video_scale": 1.0,
+	"for_web": false
 }
 const VIDEO_CONFIG_SAVE_PATH = "user://video.json"
-
 
 # Video properties
 var video = {
@@ -31,6 +31,7 @@ var video = {
 	"output_path": "",
 	"viewport_scale": 1.0,
 	"video_scale": 1.0,
+	"for_web": false
 }
 
 var current_frame = 0
@@ -79,7 +80,7 @@ func load_video_preferences():
 		save_video_preferences()
 	load_cfg.open(VIDEO_CONFIG_SAVE_PATH, File.READ)
 	video = parse_json(load_cfg.get_as_text())
-	update_settings_menu(video.crf, video.fps, video.video_scale, video.viewport_scale)
+	update_settings_menu(video.crf, video.fps, video.video_scale, video.viewport_scale, video.for_web)
 	load_cfg.close()
 
 func save_video_preferences():
@@ -198,21 +199,26 @@ func stop_recording():
 func render_video(output_path):
 	print("Rendering video with ", str(video.fps), " as framerate and ", str(video.crf), " as the CRF.")
 	var output = []
-
-	OS.execute(
-		"ffmpeg",
-		[
+	
+	# Add in your custom ffmpeg commands here.
+	# The output path is added in the web_check
+	var ffmpeg_execute: Array = [
 			"-y",
 			"-f", "image2",
 			"-framerate", video.fps,
 			"-i", user_dir + "/tmp/img%d.exr",
 #			"-i", user_dir + "/tmp/audio.wav",
 			"-crf", video.crf,
-#			"-vf", "format=yuv420p",
-			output_path
-		],
-		true, output, true
-	)
+		]
+	
+	# Web check
+	if video.for_web:
+		ffmpeg_execute.append_array(["-vf", "format=yuv420p", output_path])
+	else:
+		ffmpeg_execute.append(output_path)
+	
+	OS.execute("ffmpeg", ffmpeg_execute, true, output, true)
+	
 	print("Render done!")
 	print(output)
 	settings_btn.disabled = false
@@ -258,6 +264,7 @@ func _on_Exit_Btn_pressed():
 	video.crf = $SettingsPopup/Settings/CRF/Value.value
 	video.video_scale = $SettingsPopup/Settings/VideoScale/Value.value
 	video.viewport_scale = $SettingsPopup/Settings/ViewportScale/Value.value
+	video.for_web = $SettingsPopup/Settings/ForWeb/Value.pressed
 	save_video_preferences()
 	settings_popup.hide()
 
@@ -287,8 +294,16 @@ func reparent(child: Node, new_parent: Node):
 	old_parent.remove_child(child)
 	new_parent.add_child(child)
 
-func update_settings_menu(crf=24, fps=60, video_scale=1, viewport_scale=1):
+func update_settings_menu(crf=24, fps=60, video_scale=1, viewport_scale=1, for_web=false):
 	$SettingsPopup/Settings/CRF/Value.value = crf
 	$SettingsPopup/Settings/FPS/Value.value = fps
 	$SettingsPopup/Settings/VideoScale/Value.value = video_scale
 	$SettingsPopup/Settings/ViewportScale/Value.value = viewport_scale
+	$SettingsPopup/Settings/ForWeb/Value.pressed = video.for_web
+
+func _on_forweb_toggled(button_pressed):
+	if button_pressed:
+		video.for_web = true
+	else:
+		video.for_web = false
+	pass # Replace with function body.
