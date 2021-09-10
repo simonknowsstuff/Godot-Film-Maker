@@ -41,7 +41,7 @@ The repository as a whole is a Godot project. You can import it from the Project
 
 ### Contributors:
 * [Technohacker](https://github.com/Technohacker): Contributed to the main image capturing and combining code. 
-* [abhinav3967](https://github.com/abhinav3967): Contributed to the backbone of the code and developed the prototype audio and video capturing functions. 
+* [AbhinavKDev](https://github.com/AbhinavKDev): Contributed to the backbone of the code and developed the prototype audio and video capturing functions.
 
 ### Donations:
 You can donate to the project via [coindrop.](https://coindrop.to/simonknowsstuff)
