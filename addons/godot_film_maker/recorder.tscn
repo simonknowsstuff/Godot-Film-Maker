@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://addons/godot_film_maker/recorder.gd" type="Script" id=1]
 [ext_resource path="res://addons/godot_film_maker/textures/play_btn.png" type="Texture" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://addons/godot_film_maker/textures/stop_btn.png" type="Texture" id=4]
 [ext_resource path="res://addons/godot_film_maker/textures/rec_btn.png" type="Texture" id=5]
 [ext_resource path="res://addons/godot_film_maker/textures/settings_btn.png" type="Texture" id=6]
+[ext_resource path="res://addons/godot_film_maker/ffmpeg_installer.gd" type="Script" id=7]
 
 [sub_resource type="ViewportTexture" id=1]
 viewport_path = NodePath("RenderViewport")
@@ -47,14 +48,15 @@ __meta__ = {
 }
 
 [node name="SettingsPopup" type="WindowDialog" parent="."]
+visible = true
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -172.0
-margin_top = -113.0
-margin_right = 172.0
-margin_bottom = 113.0
+margin_left = -217.5
+margin_top = -123.5
+margin_right = 217.5
+margin_bottom = 123.5
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -71,7 +73,7 @@ __meta__ = {
 }
 
 [node name="Title" type="Label" parent="SettingsPopup/Settings"]
-margin_right = 328.0
+margin_right = 419.0
 margin_bottom = 14.0
 text = "Godot Film Maker Settings"
 align = 1
@@ -82,19 +84,20 @@ __meta__ = {
 
 [node name="FPS" type="HBoxContainer" parent="SettingsPopup/Settings"]
 margin_top = 18.0
-margin_right = 328.0
+margin_right = 419.0
 margin_bottom = 42.0
 
 [node name="Label" type="Label" parent="SettingsPopup/Settings/FPS"]
 margin_top = 5.0
-margin_right = 250.0
+margin_right = 341.0
 margin_bottom = 19.0
 size_flags_horizontal = 3
 text = "FPS (Frames Per Second): "
+valign = 1
 
 [node name="Value" type="SpinBox" parent="SettingsPopup/Settings/FPS"]
-margin_left = 254.0
-margin_right = 328.0
+margin_left = 345.0
+margin_right = 419.0
 margin_bottom = 24.0
 max_value = 200.0
 value = 60.0
@@ -104,19 +107,20 @@ suffix = "FPS"
 
 [node name="CRF" type="HBoxContainer" parent="SettingsPopup/Settings"]
 margin_top = 46.0
-margin_right = 328.0
+margin_right = 419.0
 margin_bottom = 70.0
 
 [node name="Label" type="Label" parent="SettingsPopup/Settings/CRF"]
 margin_top = 5.0
-margin_right = 250.0
+margin_right = 341.0
 margin_bottom = 19.0
 size_flags_horizontal = 3
 text = "CRF (Constant Rate Factor): "
+valign = 1
 
 [node name="Value" type="SpinBox" parent="SettingsPopup/Settings/CRF"]
-margin_left = 254.0
-margin_right = 328.0
+margin_left = 345.0
+margin_right = 419.0
 margin_bottom = 24.0
 max_value = 51.0
 value = 24.0
@@ -125,19 +129,20 @@ align = 3
 
 [node name="ViewportScale" type="HBoxContainer" parent="SettingsPopup/Settings"]
 margin_top = 74.0
-margin_right = 328.0
+margin_right = 419.0
 margin_bottom = 98.0
 
 [node name="Label" type="Label" parent="SettingsPopup/Settings/ViewportScale"]
-margin_right = 250.0
+margin_right = 341.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 size_flags_vertical = 5
 text = "Viewport Scale"
+valign = 1
 
 [node name="Value" type="SpinBox" parent="SettingsPopup/Settings/ViewportScale"]
-margin_left = 254.0
-margin_right = 328.0
+margin_left = 345.0
+margin_right = 419.0
 margin_bottom = 24.0
 min_value = 0.1
 max_value = 4.0
@@ -148,19 +153,20 @@ suffix = "x"
 
 [node name="VideoScale" type="HBoxContainer" parent="SettingsPopup/Settings"]
 margin_top = 102.0
-margin_right = 328.0
+margin_right = 419.0
 margin_bottom = 126.0
 
 [node name="Label" type="Label" parent="SettingsPopup/Settings/VideoScale"]
-margin_right = 250.0
+margin_right = 341.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 size_flags_vertical = 5
 text = "Video Scale"
+valign = 1
 
 [node name="Value" type="SpinBox" parent="SettingsPopup/Settings/VideoScale"]
-margin_left = 254.0
-margin_right = 328.0
+margin_left = 345.0
+margin_right = 419.0
 margin_bottom = 24.0
 min_value = 0.1
 max_value = 4.0
@@ -169,13 +175,44 @@ value = 1.0
 align = 3
 suffix = "x"
 
-[node name="ForWeb" type="HBoxContainer" parent="SettingsPopup/Settings"]
+[node name="FFMpegPath" type="HBoxContainer" parent="SettingsPopup/Settings"]
 margin_top = 130.0
-margin_right = 328.0
-margin_bottom = 170.0
+margin_right = 419.0
+margin_bottom = 150.0
+
+[node name="Label" type="Label" parent="SettingsPopup/Settings/FFMpegPath"]
+margin_right = 81.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+size_flags_vertical = 5
+text = "FFMpeg Path"
+valign = 1
+
+[node name="ffmpeg_path_btn" type="Button" parent="SettingsPopup/Settings/FFMpegPath"]
+margin_left = 85.0
+margin_right = 171.0
+margin_bottom = 20.0
+text = "Locate Path"
+
+[node name="ffmpeg_auto_download" type="Button" parent="SettingsPopup/Settings/FFMpegPath"]
+margin_left = 175.0
+margin_right = 284.0
+margin_bottom = 20.0
+text = "Auto Download"
+
+[node name="ffmpeg_global_setter" type="Button" parent="SettingsPopup/Settings/FFMpegPath"]
+margin_left = 288.0
+margin_right = 419.0
+margin_bottom = 20.0
+text = "Use system install"
+
+[node name="ForWeb" type="HBoxContainer" parent="SettingsPopup/Settings"]
+margin_top = 154.0
+margin_right = 419.0
+margin_bottom = 194.0
 
 [node name="Label" type="Label" parent="SettingsPopup/Settings/ForWeb"]
-margin_right = 248.0
+margin_right = 339.0
 margin_bottom = 40.0
 size_flags_horizontal = 3
 size_flags_vertical = 5
@@ -183,30 +220,29 @@ text = "For Web?"
 valign = 1
 
 [node name="Value" type="CheckButton" parent="SettingsPopup/Settings/ForWeb"]
-margin_left = 252.0
-margin_right = 328.0
+margin_left = 343.0
+margin_right = 419.0
 margin_bottom = 40.0
 size_flags_horizontal = 5
 size_flags_vertical = 5
 align = 3
 
 [node name="Spacer" type="Control" parent="SettingsPopup/Settings"]
-margin_top = 174.0
-margin_right = 328.0
-margin_bottom = 186.0
+margin_top = 198.0
+margin_right = 419.0
+margin_bottom = 207.0
 size_flags_vertical = 3
 
 [node name="Exit_Btn" type="Button" parent="SettingsPopup/Settings"]
-margin_top = 190.0
-margin_right = 328.0
-margin_bottom = 210.0
+margin_top = 211.0
+margin_right = 419.0
+margin_bottom = 231.0
 text = "Confirm Changes"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="SaveOutputDialog" type="FileDialog" parent="."]
-visible = true
 margin_left = 174.963
 margin_top = 119.565
 margin_right = 796.963
@@ -215,7 +251,26 @@ window_title = "Save Rendered Video"
 resizable = true
 mode_overrides_title = false
 access = 2
-filters = PoolStringArray( "*.mp4 ; MPEG4 Video File" )
+filters = PoolStringArray( "*.mp4 ; QuickTime / MOV", "*.mov ; Quicktime / MOV", "*.avi ; AVI (Audio Video Interleaved)" )
+current_dir = "/home/simon/Documents/Godot Projects/Godot-Film-Maker"
+current_file = "videoexport.mp4"
+current_path = "/home/simon/Documents/Godot Projects/Godot-Film-Maker/videoexport.mp4"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FFMpegLocator" type="FileDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -314.0
+margin_top = -164.5
+margin_right = 314.0
+margin_bottom = 164.5
+window_title = "Locate FFmpeg"
+mode = 0
+access = 2
 current_dir = "/home/simon/Documents/Godot Projects/Godot-Film-Maker"
 current_path = "/home/simon/Documents/Godot Projects/Godot-Film-Maker/"
 __meta__ = {
@@ -321,9 +376,47 @@ render_target_v_flip = true
 audio_listener_enable_2d = true
 audio_listener_enable_3d = true
 
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
+script = ExtResource( 7 )
+
+[node name="NotificationPanel" type="PopupPanel" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -172.5
+margin_top = -62.0
+margin_right = 172.5
+margin_bottom = 62.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="info" type="Label" parent="NotificationPanel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -168.5
+margin_top = -58.0
+margin_right = 168.5
+margin_bottom = 58.0
+text = "Downloading FFMpeg"
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="pressed" from="SettingsPopup/Settings/FFMpegPath/ffmpeg_path_btn" to="." method="_on_ffmpeg_path_btn_pressed"]
+[connection signal="pressed" from="SettingsPopup/Settings/FFMpegPath/ffmpeg_auto_download" to="." method="_on_ffmpeg_auto_download_pressed"]
+[connection signal="pressed" from="SettingsPopup/Settings/FFMpegPath/ffmpeg_global_setter" to="." method="_on_ffmpeg_global_setter_pressed"]
 [connection signal="toggled" from="SettingsPopup/Settings/ForWeb/Value" to="." method="_on_forweb_toggled"]
 [connection signal="pressed" from="SettingsPopup/Settings/Exit_Btn" to="." method="_on_Exit_Btn_pressed"]
 [connection signal="file_selected" from="SaveOutputDialog" to="." method="_on_SaveOutputDialog_file_selected"]
+[connection signal="file_selected" from="FFMpegLocator" to="." method="_on_FFMpegLocator_file_selected"]
+[connection signal="popup_hide" from="FFMpegLocator" to="." method="_on_FFMpegLocator_popup_hide"]
 [connection signal="pressed" from="Controls/Buttons/Record" to="." method="_on_rec_button_pressed"]
 [connection signal="pressed" from="Controls/Buttons/Stop" to="." method="_on_stop_button_pressed"]
 [connection signal="pressed" from="Controls/Buttons/Play" to="." method="_on_play_button_pressed"]

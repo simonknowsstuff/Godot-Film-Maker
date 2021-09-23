@@ -6,6 +6,8 @@ onready var rec_btn = $Controls/Buttons/Record
 onready var stop_btn = $Controls/Buttons/Stop
 onready var pause_btn = $Controls/Buttons/Pause
 onready var settings_btn = $Controls/Buttons/Settings
+onready var notification_panel = $NotificationPanel
+onready var ffmpeg_installer = $HTTPRequest
 
 onready var export_popup = $SaveOutputDialog
 onready var settings_popup = $SettingsPopup
@@ -16,6 +18,7 @@ const REC_DIR = "tmp" # Screenshots will be stored in this directory within user
 # Video config
 const VIDEO_DEFAULT = {
 	"fps": 60.0,
+	"ffmpeg_path": "ffmpeg",
 	"crf": 24.0,
 	"output_path": "",
 	"viewport_scale": 1.0,
@@ -27,6 +30,7 @@ const VIDEO_CONFIG_SAVE_PATH = "user://video.json"
 # Video properties
 var video = {
 	"fps": 60.0,
+	"ffmpeg_path": "ffmpeg",
 	"crf": 24.0,
 	"output_path": "",
 	"viewport_scale": 1.0,
@@ -72,7 +76,7 @@ func _ready():
 		threads.append(thread)
 
 	print("Godot Film Maker initialised!")
-
+	
 func load_video_preferences():
 	var load_cfg = File.new()
 	if not load_cfg.file_exists(VIDEO_CONFIG_SAVE_PATH):
@@ -90,6 +94,8 @@ func save_video_preferences():
 	save_cfg.close()
 
 func start_recording():
+	rec_btn.hide()
+	stop_btn.show()
 	settings_btn.disabled = true
 	AudioServer.add_bus_effect(0, AudioEffectRecord.new())
 	effect_idx = AudioServer.get_bus_effect_count(0) - 1
@@ -145,7 +151,8 @@ func snap_frame():
 
 func _frame_saver_thread(thread_start_index):
 	while true:
-		print("Waiting for capture to complete...")
+#		Debug line.
+#		print("Waiting for capture to complete...")
 		save_semaphore.wait() # Wait until posted.
 		print("Saving frames...")
 
@@ -170,6 +177,8 @@ func _frame_saver_thread(thread_start_index):
 	print("Stopping thread")
 
 func stop_recording():
+	rec_btn.show()
+	stop_btn.hide()
 	# Stop the frame saving loop
 	audio.set_recording_active(false)
 
@@ -200,6 +209,9 @@ func render_video(output_path):
 	print("Rendering video with ", str(video.fps), " as framerate and ", str(video.crf), " as the CRF.")
 	var output = []
 	
+	notification_panel.get_node("info").text = "Rendering Video..."
+	notification_panel.show()
+	
 	# Add in your custom ffmpeg commands here.
 	# The output path is added in the web_check
 	var ffmpeg_execute: Array = [
@@ -213,13 +225,14 @@ func render_video(output_path):
 	
 	# Web check
 	if video.for_web:
-		ffmpeg_execute.append_array(["-vf", "format=yuv420p", output_path])
-	else:
-		ffmpeg_execute.append(output_path)
+		ffmpeg_execute.append_array(["-vf", "format=yuv420p"])
 	
-	OS.execute("ffmpeg", ffmpeg_execute, true, output, true)
+	ffmpeg_execute.append(output_path)
+	
+	OS.execute(video.ffmpeg_path, ffmpeg_execute, true, output, true)
 	
 	print("Render done!")
+	notification_panel.hide()
 	print(output)
 	settings_btn.disabled = false
 	remove_directory(REC_DIR)
@@ -241,16 +254,12 @@ func _exit_tree():
 
 # Event handlers
 func _on_rec_button_pressed():
-	rec_btn.hide()
-	stop_btn.show()
 	start_recording()
 
 func _on_play_button_pressed():
 	pass # Replace with function body.
 
 func _on_stop_button_pressed():
-	rec_btn.show()
-	stop_btn.hide()
 	stop_recording()
 
 func _on_pause_button_pressed():
@@ -302,8 +311,37 @@ func update_settings_menu(crf=24, fps=60, video_scale=1, viewport_scale=1, for_w
 	$SettingsPopup/Settings/ForWeb/Value.pressed = video.for_web
 
 func _on_forweb_toggled(button_pressed):
-	if button_pressed:
-		video.for_web = true
-	else:
-		video.for_web = false
-	pass # Replace with function body.
+	video.for_web = button_pressed
+
+func _on_ffmpeg_path_btn_pressed():
+	lock_ui()
+	settings_popup.hide()
+	get_node("FFMpegLocator").show()
+
+func _on_ffmpeg_auto_download_pressed():
+	settings_popup.hide()
+	ffmpeg_installer.auto_download_ffmpeg()
+
+func _on_FFMpegLocator_file_selected(path):
+	unlock_ui()
+	settings_popup.show()
+	get_node("FFMpegLocator").hide()
+	video.ffmpeg_path = path
+
+func _on_ffmpeg_global_setter_pressed():
+	video.ffmpeg_path = "ffmpeg"
+
+func lock_ui():
+	var control_nodes = $Controls.get_node("Buttons").get_children()
+	for control_node in control_nodes:
+		control_node.disabled = true
+
+func unlock_ui():
+	var control_nodes = $Controls.get_node("Buttons").get_children()
+	for control_node in control_nodes:
+		control_node.disabled = false
+
+func _on_FFMpegLocator_popup_hide():
+	unlock_ui()
+	settings_popup.show()
+	get_node("FFMpegLocator").hide()
